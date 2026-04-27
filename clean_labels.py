@@ -25,13 +25,25 @@ def clean_labels():
             if len(parts) == 5:
                 cls, x_c, y_c, w, h = map(float, parts)
                 
-                # Logic nhận diện nhân vật của bản thân trong game TPS (Góc nhìn thứ 3):
-                # 1. Nằm ở khoảng giữa màn hình theo chiều ngang (x từ 0.35 đến 0.65)
-                # 2. Nằm ở nửa dưới màn hình (y > 0.45)
-                # 3. Kích thước khá to vì đứng gần camera (width > 0.08, height > 0.15)
+                # Logic nhận diện nhân vật của bản thân và UI rác:
+                # 1. Nhân vật bản thân (Góc nhìn thứ 3):
                 is_player = (0.35 < x_c < 0.65) and (y_c > 0.45) and (w > 0.08) and (h > 0.15)
                 
-                if is_player:
+                # 2. UI rác (Skill bar, Minimap, Buffs):
+                is_skill_bar = (y_c > 0.85) # Vùng dưới cùng màn hình
+                is_minimap   = (x_c > 0.8) and (y_c < 0.3) # Góc trên bên phải
+                is_buffs     = (x_c < 0.2) and (y_c < 0.2) # Góc trên bên trái
+                
+                # 3. Vật thể rác không phải hình người (Cái lu, tảng đá, hòm):
+                # Kẻ địch thường cao gầy (ratio height/width > 1.2)
+                aspect_ratio = h / w if w > 0 else 0
+                is_not_humanoid = (aspect_ratio < 1.1) # Quá vuông hoặc nằm ngang
+                
+                # 4. Vật thể quá mỏng (Cửa, cột, thanh sắt):
+                # Kẻ địch phải có độ rộng tối thiểu (width > 0.025)
+                is_too_thin = (w < 0.028)
+                
+                if is_player or is_skill_bar or is_minimap or is_buffs or is_not_humanoid or is_too_thin:
                     removed_boxes += 1
                 else:
                     new_lines.append(line)

@@ -116,8 +116,15 @@ def train():
     print("[*] Model: yolov8n (nano - nhỏ nhất, nhanh nhất)")
     print()
     
-    # Load pretrained model (nano cho tốc độ tốt nhất)
-    model = YOLO("yolov8n.pt")
+    # Load model: Ưu tiên dùng model đang học dở để học tiếp
+    last_model = "runs/detect/avatarstar-3/weights/last.pt"
+    if os.path.exists(last_model):
+        print(f"[*] Tìm thấy model đang học dở: {last_model}")
+        print("[*] Sẽ học tiếp từ Vòng 73 để nâng cao trình độ...")
+        model = YOLO(last_model)
+    else:
+        print("[*] Không tìm thấy model cũ, bắt đầu học từ đầu với yolov8n.pt")
+        model = YOLO("yolov8n.pt")
     
     # Train
     results = model.train(
