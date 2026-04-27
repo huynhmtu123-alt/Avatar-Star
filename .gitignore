@@ -1,0 +1,19 @@
+# Ignore training runs and dataset (too large for GitHub)
+runs/
+dataset/
+video_temp/
+Video\ Train/
+*.mp4
+*.mov
+*.avi
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS
+.DS_Store
+
+# Include the final model weight specifically
+!models/avatarstar.pt
